@@ -33,8 +33,11 @@
 
     setInterval(function() {
       globalUpdate(globalState, dt);
-      updateTeamZero(globalState);
-      updateTeamOne(globalState);
+
+      var globalStateCopy = {};
+      $.extend(true, globalStateCopy, globalState);
+      updateTeamZero(globalStateCopy);
+      updateTeamOne(globalStateCopy);
     }, updateTimeout);
     setInterval(function() {
       globalDraw(viewport, globalState);
