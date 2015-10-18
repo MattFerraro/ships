@@ -28,11 +28,15 @@
   $(document).ready(function() {
     viewport = $("#viewport")[0];
     globalState = globalInit();
+    var updateTimeout = 30;
+    dt = updateTimeout / 1000;
 
-    setInterval(globalUpdate, 100);
+    setInterval(function() {
+      globalUpdate(globalState, dt);
+    }, updateTimeout);
     setInterval(function() {
       globalDraw(viewport, globalState);
-    }, 500);
+    }, 20);
   });
   </script>
 </body>

@@ -1,7 +1,7 @@
 var shipPrototypes = {
 	"default": {
-		"size": 10,
-		"maxSpeed": 1,
+		"size": 10, 		// measured in pixels
+		"maxSpeed": 1,  	// measured in pixels/second
 		"initialHealth": 100
 	}
 }
@@ -33,8 +33,8 @@ function globalInit() {
 			}
 			ship.x = team.base.position.x;
 			ship.y = team.base.position.y + 20 * j - numShips/2 * 20;
-			ship.heading = 0;
-			ship.speed = 0;
+			ship.heading = 0 * Math.PI / 180;
+			ship.speed = 10;
 			ship.health = ship.initialHealth;
 			team.ships.push(ship);
 		}
@@ -44,10 +44,26 @@ function globalInit() {
 }
 
 
-function globalUpdate(globalState) {
+function globalUpdate(globalState, dt) {
 	// Input: the global state
 	// This function's job is to morph the global state to propogate the
 	// physics of the simulated universe
+	for (var i = globalState.teams.length - 1; i >= 0; i--) {
+		var team = globalState.teams[i];
+
+		for (var j = team.ships.length - 1; j >= 0; j--) {
+			var ship = team.ships[j];
+
+			// somehow get any messages addressed to this ship and apply them
+
+			// given the state of this ship's derivatives, assume constant
+			// and propagate forward for a small dt
+			var dx = Math.cos(ship.heading) * ship.speed;
+			var dy = Math.sin(ship.heading) * ship.speed;
+			ship.x += dx * dt;
+			ship.y += dy * dt;
+		};
+	};
 }
 
 function updateTeamZero(globalState) {
