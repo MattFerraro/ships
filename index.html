@@ -9,7 +9,7 @@
 	<div class="container">
   		<div class="row">
   			<div class="col-md-8" style="background-color:rgb(240,240,240)">
-  				Basic Site
+  				<canvas id="viewport" width="700" height="700" style="border:1px solid #000000;"></canvas>
   			</div>
   			<div class="col-md-2" style="background-color:rgb(230,230,230)">
   				With Bootstrap <br>
@@ -22,5 +22,18 @@
 	<script type="text/javascript" src="underscore-min.js"></script>
 	<script type="text/javascript" src="jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="ships.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+    viewport = $("#viewport")[0];
+    globalState = globalInit();
+
+    setInterval(globalUpdate, 100);
+    setInterval(function() {
+      globalDraw(viewport, globalState);
+    }, 500);
+  });
+  </script>
 </body>
 </html>
