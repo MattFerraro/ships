@@ -33,8 +33,8 @@ function globalInit() {
 			}
 			ship.x = team.base.position.x;
 			ship.y = team.base.position.y + 20 * j - numShips/2 * 20;
-			ship.heading = 0 * Math.PI / 180;
-			ship.speed = 10;
+			ship.heading = 90 * Math.PI / 180;
+			ship.speed = 100;
 			ship.health = ship.initialHealth;
 			team.ships.push(ship);
 		}
@@ -70,12 +70,34 @@ function updateTeamZero(globalState) {
 	// Input is (a copy of) the entire global state
 	// Output is a dictionary of commands that are addressed to the ships
 	// under the command of team zero
+	var team = globalState.teams[0];
+	var enemyTeam = globalState.teams[1];
+	var enemyBase = enemyTeam.base;
+
+	for (var i = team.ships.length - 1; i >= 0; i--) {
+		var ship = team.ships[i];
+		var baseDx = enemyBase.position.x - ship.x;
+		var baseDy = enemyBase.position.y - ship.y;
+		var heading = Math.atan2(baseDy, baseDx);
+		ship.heading = heading;
+	};
 }
 
 function updateTeamOne(globalState) {
 	// Input is (a copy of) the entire global state
 	// Output is a dictionary of commands that are addressed to the ships
 	// under the command of team one
+	var team = globalState.teams[1];
+	var enemyTeam = globalState.teams[0];
+	var enemyBase = enemyTeam.base;
+
+	for (var i = team.ships.length - 1; i >= 0; i--) {
+		var ship = team.ships[i];
+		var baseDx = enemyBase.position.x - ship.x;
+		var baseDy = enemyBase.position.y - ship.y;
+		var heading = Math.atan2(baseDy, baseDx);
+		ship.heading = heading;
+	};
 }
 
 function globalDraw(canvas, globalState) {
