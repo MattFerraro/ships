@@ -27,18 +27,29 @@
   <script type="text/javascript">
   $(document).ready(function() {
     viewport = $("#viewport")[0];
+    // Initialize the world
     globalState = globalInit();
+
+    // Initialize the teams
+    var globalStateCopy = {};
+    $.extend(true, globalStateCopy, globalState);
+    var teamZeroState = teamZeroInit(globalStateCopy);
+
+    var globalStateCopy = {};
+    $.extend(true, globalStateCopy, globalState);
+    var teamOneState = teamOneInit(globalStateCopy);
+
     var updateTimeout = 30;
     dt = updateTimeout / 1000;
 
     setInterval(function() {
       var globalStateCopy = {};
       $.extend(true, globalStateCopy, globalState);
-      teamZeroCommands = getCommandsTeamZero(globalStateCopy);
+      teamZeroCommands = getCommandsTeamZero(globalStateCopy, teamZeroState);
 
       var globalStateCopy = {};
       $.extend(true, globalStateCopy, globalState);
-      teamOneCommands = getCommandsTeamOne(globalStateCopy);
+      teamOneCommands = getCommandsTeamOne(globalStateCopy, teamOneState);
 
       globalUpdate(globalState, dt, [teamZeroCommands, teamOneCommands]);
     }, updateTimeout);
