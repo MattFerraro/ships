@@ -32,12 +32,15 @@
     dt = updateTimeout / 1000;
 
     setInterval(function() {
-      globalUpdate(globalState, dt);
+      var globalStateCopy = {};
+      $.extend(true, globalStateCopy, globalState);
+      teamZeroCommands = getCommandsTeamZero(globalStateCopy);
 
       var globalStateCopy = {};
       $.extend(true, globalStateCopy, globalState);
-      updateTeamZero(globalStateCopy);
-      updateTeamOne(globalStateCopy);
+      teamOneCommands = getCommandsTeamOne(globalStateCopy);
+
+      globalUpdate(globalState, dt, [teamZeroCommands, teamOneCommands]);
     }, updateTimeout);
     setInterval(function() {
       globalDraw(viewport, globalState);
