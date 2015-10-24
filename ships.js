@@ -1,13 +1,52 @@
-var shipPrototypes = {
-	default: {
-		size: 10, 		// measured in pixels
-		maxSpeed: 1,  	// measured in pixels/second
-		initialHealth: 100,
-		mass: 1,
-		moment: 1,
-		maxTorque: 1
+
+
+function Ship (x, y) {
+	var ship = {};
+	ship.class = "default";
+	var shipPrototypes = {
+		default: {
+			size: 10, 		// measured in pixels
+			maxSpeed: 1,  	// measured in pixels/second
+			initialHealth: 100,
+			mass: 1,
+			moment: 1,
+			maxTorque: 1
+		}
 	}
+	ship.image = shipyard(20, 20);
+
+	// Copy over all the default params from the ship prototype
+	for(var k in shipPrototypes[ship.class]) {
+		ship[k]=shipPrototypes[ship.class][k];
+	}
+	ship.x = x;
+	ship.y = y;
+	ship.dx = Math.random() * 20 - 10;
+	ship.dy = Math.random() * 20 - 10;
+
+	ship.theta = 90 * Math.PI / 180;
+	ship.dtheta = 0;
+
+	ship.health = ship.initialHealth;
+	return ship;
 }
+
+function Team (color, basePosition, numberOfShips) {
+		var team = {};
+		var x, y;
+		team.color = color;
+		team.base = {
+			position: basePosition,
+			size: 40
+		};
+		team.ships = [];
+		for (var j = 0; j < numberOfShips; j++) {
+			x = team.base.position.x;
+			y = team.base.position.y + 20 * j - numberOfShips/2 * 20;
+			team.ships.push(Ship(x, y));
+		}
+	return team;
+};
 
 function globalInit() {
 	// Returns the initial global state
@@ -15,35 +54,10 @@ function globalInit() {
 
 	var colors = ["red", "blue"];
 	var basePositions = [{x: 100, y: 350}, {x: 600, y: 350}];
-	var numShips = 40;
+	var numberOfShips = 40;
 	globalState.teams = [];
 	for (var i = 0; i < 2; i++) {
-		var team = {};
-		team.color = colors[i];
-		team.base = {
-			position: basePositions[i],
-			size: 40
-		};
-		team.ships = [];
-		for (var j = 0; j < numShips; j++) {
-			var ship = {};
-			ship.class = "default";
-			// Copy over all the default params from the ship prototype
-			for(var k in shipPrototypes[ship.class]) {
-				ship[k]=shipPrototypes[ship.class][k];
-			}
-			ship.x = team.base.position.x;
-			ship.y = team.base.position.y + 20 * j - numShips/2 * 20;
-			ship.dx = Math.random() * 20 - 10;
-			ship.dy = Math.random() * 20 - 10;
-
-			ship.theta = 90 * Math.PI / 180;
-			ship.dtheta = 0;
-
-			ship.health = ship.initialHealth;
-			team.ships.push(ship);
-		}
-		globalState.teams.push(team);
+		globalState.teams.push(Team(colors[i], basePositions[i], numberOfShips));
 	}
 	return globalState;
 }
@@ -225,19 +239,32 @@ function getCommandsTeamZero(globalState, teamZeroState) {
 function getCommandsTeamOne(globalState, teamOneState) {
 	// Input is (a copy of) the entire global state
 	// Output is a dictionary of commands that are addressed to the ships
-	// under the command of team one
-	var team = globalState.teams[1];
-	var enemyTeam = globalState.teams[0];
-	var enemyBase = enemyTeam.base;
+	// under the command of team one (the blue team)
+	return _.map(globalState.teams[1].ships, function (ship) {
+		return {torque: 0.1, thrust: 0}
+	});
+}
 
-	var commands = [];
-	for (var i = 0; i < team.ships.length; i++) {
-		commands.push({
-			torque: .1,
-			thrust: 0
-		});
-	};
-	return commands;
+function drawRotatedImage(context, image, x, y, angle) { 
+ 	var TO_RADIANS = Math.PI/180; 
+
+	// save the current co-ordinate system 
+	// before we screw with it
+	context.save(); 
+ 
+	// move to the middle of where we want to draw our image
+	context.translate(x, y);
+ 
+	// rotate around that point, converting our 
+	// angle from degrees to radians 
+	context.rotate(angle * TO_RADIANS);
+ 
+	// draw it up and to the left by half the width
+	// and height of the image 
+	context.drawImage(image, -(image.width/2), -(image.height/2));
+ 
+	// and restore the co-ords to how they were when we began
+	context.restore(); 
 }
 
 function globalDraw(canvas, globalState) {
@@ -260,15 +287,26 @@ function globalDraw(canvas, globalState) {
 		// draw each ship
 		for (var j = team.ships.length - 1; j >= 0; j--) {
 			var ship = team.ships[j];
-			ctx.fillRect(ship.x - ship.size / 2, ship.y - ship.size / 2, ship.size, ship.size);
-
 			var headingY = Math.sin(ship.theta) * 40;
 			var headingX = Math.cos(ship.theta) * 40;
-			ctx.strokeStyle = "#FFFFFF";
-			ctx.beginPath();
-			ctx.moveTo(ship.x,ship.y);
-			ctx.lineTo(ship.x + headingX, ship.y + headingY);
-			ctx.stroke();
+			// if the ship has a bitmap, fill with that
+			if (ship.image) {
+				ctx.save();
+				ctx.translate(ship.x - 10, ship.y - 10);
+				ctx.rotate(ship.theta + Math.PI/2);
+				ctx.drawImage(ship.image, -10, -10);
+				//ctx.rotate(-1*ship.theta);
+				//ctx.translate(-1*ship.x, -1*ship.y);
+				ctx.restore();
+			} else {
+				ctx.fillRect(ship.x - ship.size / 2, ship.y - ship.size / 2, ship.size, ship.size);
+
+				ctx.strokeStyle = "#FFFFFF";
+				ctx.beginPath();
+				ctx.moveTo(ship.x,ship.y);
+				ctx.lineTo(ship.x + headingX, ship.y + headingY);
+				ctx.stroke();
+			}
 		};
 	};
 }
