@@ -3,13 +3,13 @@
 (function() {
 	var davis = {
 		random:function (x){return (Math.floor(Math.random()*x));},
-		
+
 		bell: function (x)
 			{
 				var i=Math.round((davis.random(x)+davis.random(x)+davis.random(x))/3);
 				return i;
 			},
-		
+
 		randomColor:function (x,full){
 			if (x){	x=x.toLowerCase();}
 			else{x=="none"}
@@ -46,9 +46,9 @@
 				}
 			else{
 				return color;
-			}	
+			}
 		},
-		
+
 		alpha:function(colorString,number){
 			colorString=colorString.replace(/rgb/,"rgba");
 			colorString=colorString.replace(/[)]/,(","+number+")"));
@@ -66,7 +66,7 @@
 		}
 	};
 
-	
+
 
 	// mutate the average
 	var ma=function(a,b,variance){
@@ -77,7 +77,7 @@
 		if (avg>Math.max(a,b)){avg=Math.max(a,b);}
 		return avg;
 	};
-	
+
 	var ship=function(width, height){
 
 		var canvas = document.createElement('CANVAS');
@@ -86,7 +86,7 @@
 		var width = width || 100;
 		var height = height || width;
 
-	
+
 		//mirror point
 		var mp=function(x){
 			return (width/2)-x+(width/2);
@@ -338,7 +338,7 @@
 		var r=c.r || 100;
 		if (n%2==0){
 			var rotation=360/(n*2)*davis.random(n*2);
-		} 
+		}
 		else {
 			var rotation=90+(180*davis.random(2));
 		};
@@ -359,10 +359,9 @@
 		ctx.fill();
 		ctx.stroke();
 		return true;
-	};	
+	};
 
 	var shipyard = function(width, height) {
-		console.log('yolo');
 		return ship(width, height);
 	};
 
