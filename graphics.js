@@ -37,6 +37,12 @@ function globalDraw(canvas, globalState) {
 		var base = team.base;
 		ctx.fillRect(base.position.x - base.size / 2, team.base.position.y - base.size / 2, base.size, base.size);
 
+	};
+
+	for (var i = globalState.teams.length - 1; i >= 0; i--) {
+		var team = globalState.teams[i];
+		ctx.fillStyle = team.color;
+
 		// draw each ship
 		for (var j = team.ships.length - 1; j >= 0; j--) {
 			var ship = team.ships[j];
