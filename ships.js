@@ -1,5 +1,4 @@
 
-
 function Ship (x, y) {
 	var ship = {};
 	ship.class = "default";
@@ -60,39 +59,6 @@ function globalInit() {
 		globalState.teams.push(Team(colors[i], basePositions[i], numberOfShips));
 	}
 	return globalState;
-}
-
-function teamZeroInit(globalState) {
-	// Inputs: a copy of the global state
-	// Outputs: team zero's initial state, a dictionary
-
-	// Each ship should pick a random spot near the enemy base and position
-	// itself there. Pick our location by imagining a circle around the enemy
-	// base, then picking a random spot on the circumference
-	var radius = 100;
-	var enemyTeam = globalState.teams[1];
-	var extraShipVars = _.map(globalState.teams[0].ships, function() {
-		var angle = Math.random() * Math.PI + Math.PI / 2;
-		var x = Math.cos(angle) * radius + enemyTeam.base.position.x;
-		var y = Math.sin(angle) * radius + enemyTeam.base.position.y;
-
-		return {
-			goalX: x,
-			goalY: y,
-			targetX: enemyTeam.base.position.x,
-			targetY: enemyTeam.base.position.y,
-			mode: "stopping"
-		};
-	});
-	return {
-		extraShipVars: extraShipVars
-	};
-}
-
-function teamOneInit(globalState) {
-	// Inputs: a copy of the global state
-	// Outputs: team one's initial state, a dictionary
-	return {}
 }
 
 
