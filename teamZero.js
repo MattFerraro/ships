@@ -7,7 +7,8 @@ function teamZeroInit(globalState) {
     // base, then picking a random spot on the circumference
     var radius = 100;
     var enemyTeam = globalState.teams[1];
-    var extraShipVars = _.map(globalState.teams[0].ships, function() {
+    var myTeam = globalState.teams[0];
+    var extraShipVars = _.map(myTeam.ships, function() {
         var angle = Math.random() * Math.PI + Math.PI / 2;
         var x = Math.cos(angle) * radius + enemyTeam.base.position.x;
         var y = Math.sin(angle) * radius + enemyTeam.base.position.y;
@@ -25,7 +26,7 @@ function teamZeroInit(globalState) {
     };
 }
 
-function getCommandsTeamZero(globalState, teamZeroState) {
+function getCommandsTeamZero(globalState, teamState) {
     // Input is (a copy of) the entire global state
     // Output is a dictionary of commands that are addressed to the ships
     // under the command of team zero
@@ -44,7 +45,7 @@ function getCommandsTeamZero(globalState, teamZeroState) {
     var team = globalState.teams[0];
     var enemyTeam = globalState.teams[1];
     var enemyBase = enemyTeam.base;
-    var extraShipVars = teamZeroState.extraShipVars;
+    var extraShipVars = teamState.extraShipVars;
 
     var commands = [];
     for (var i = 0; i < team.ships.length; i++) {
