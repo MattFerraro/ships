@@ -11,7 +11,10 @@ function Ship (x, y) {
 			moment: 1,
 			maxTorque: 1,
 			maxMainThrust: 100,
-			maxSideThrust: 20
+			maxSideThrust: 20,
+			timeLastCannonFire: 0,
+			cannonTimeout: 1000,
+			cannonSpeed: 100
 		}
 	}
 	ship.image = shipyard(20, 20);
@@ -38,7 +41,8 @@ function Team (color, basePosition, numberOfShips) {
 		team.color = color;
 		team.base = {
 			position: basePosition,
-			size: 40
+			size: 40,
+			health: 1000
 		};
 		team.ships = [];
 		for (var j = 0; j < numberOfShips; j++) {
@@ -60,6 +64,7 @@ function globalInit() {
 	for (var i = 0; i < 2; i++) {
 		globalState.teams.push(Team(colors[i], basePositions[i], numberOfShips));
 	}
+	globalState.bullets = [];
 	return globalState;
 }
 
@@ -72,6 +77,7 @@ function globalUpdate(globalState, dt, allCommands) {
 		var team = globalState.teams[i];
 		var commands = allCommands[i];
 
+		var currentTime = new Date().getTime();
 		for (var j = team.ships.length - 1; j >= 0; j--) {
 			var ship = team.ships[j];
 			// get any commands addressed to this ship and apply them
@@ -100,11 +106,58 @@ function globalUpdate(globalState, dt, allCommands) {
 
 			var mainAccel = mainThrust / ship.mass;
 			var sideAccel = sideThrust / ship.mass;
-			ship.dx += Math.cos(ship.theta) * mainAccel * dt - Math.sin(ship.theta) * sideAccel * dt;
-			ship.dy += Math.sin(ship.theta) * mainAccel * dt + Math.cos(ship.theta) * sideAccel * dt;
+
+			var cosTheta = Math.cos(ship.theta);
+			var sinTheta = Math.sin(ship.theta);
+			ship.dx += cosTheta * mainAccel * dt - sinTheta * sideAccel * dt;
+			ship.dy += sinTheta * mainAccel * dt + cosTheta * sideAccel * dt;
 
 			ship.x += ship.dx * dt;
 			ship.y += ship.dy * dt;
+
+			if (command.fireCannon) {
+				if (currentTime > ship.timeLastCannonFire + ship.cannonTimeout) {
+					ship.timeLastCannonFire = currentTime;
+
+					globalState.bullets.push({
+						x: ship.x,
+						y: ship.y,
+						dx: ship.dx + ship.cannonSpeed * cosTheta,
+						dy: ship.dy + ship.cannonSpeed * sinTheta,
+						age: 0
+					});
+				}
+ 			}
 		};
 	};
+
+	// Handle bullet physics!
+	var baseZero = globalState.teams[0].base;
+	var baseOne = globalState.teams[1].base;
+	_.map(globalState.bullets, function(bullet) {
+		bullet.age++;
+		bullet.x += bullet.dx * dt;
+		bullet.y += bullet.dy * dt;
+
+		// Handle collision of bullets against home bases
+		if (bullet.x > baseZero.position.x - baseZero.size / 2 &&
+			bullet.x < baseZero.position.x + baseZero.size / 2 &&
+			bullet.y > baseZero.position.y - baseZero.size / 2 &&
+			bullet.y < baseZero.position.y + baseZero.size / 2) {
+			bullet.age = 1000000;
+			baseZero.health -= 10;
+		}
+		if (bullet.x > baseOne.position.x - baseOne.size / 2 &&
+			bullet.x < baseOne.position.x + baseOne.size / 2 &&
+			bullet.y > baseOne.position.y - baseOne.size / 2 &&
+			bullet.y < baseOne.position.y + baseOne.size / 2) {
+			bullet.age = 1000000;
+			baseOne.health -= 10;
+		}
+	});
+	// Get rid of old bullets
+	globalState.bullets = _.filter(globalState.bullets, function(bullet) {
+		return bullet.age < 100;
+	});
+
 }

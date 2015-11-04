@@ -59,10 +59,13 @@ function getCommandsTeamOne(globalState, teamState) {
 
         mainThrust = positionErrX * KpMain + positionErrXdt * KdMain;
         sideThrust = positionErrY * KpSide + positionErrYdt * KdSide;
+        // mainThrust = 0;
+        // sideThrust = 0;
         commands.push({
             torque: torque,
             mainThrust: mainThrust,
-            sideThrust: sideThrust
+            sideThrust: sideThrust,
+            fireCannon: true
         });
     }
     return commands;

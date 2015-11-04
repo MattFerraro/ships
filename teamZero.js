@@ -131,7 +131,8 @@ function getCommandsTeamZero(globalState, teamState) {
         commands.push({
             torque: torque,
             mainThrust: thrust,
-            sideThrust: 0
+            sideThrust: 0,
+            fireCannon: false
         });
     };
     return commands
