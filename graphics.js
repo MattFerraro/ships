@@ -27,23 +27,20 @@ function globalDraw(canvas, globalState) {
 	ctx.fillStyle="#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	// console.log(globalState);
-	// draw the teams
+	// draw the team bases
 	for (var i = globalState.teams.length - 1; i >= 0; i--) {
 		var team = globalState.teams[i];
 		ctx.fillStyle = team.color;
 
-		// draw the home base
 		var base = team.base;
 		ctx.fillRect(base.position.x - base.size / 2, team.base.position.y - base.size / 2, base.size, base.size);
-
 	};
 
+	// draw the ships
 	for (var i = globalState.teams.length - 1; i >= 0; i--) {
 		var team = globalState.teams[i];
 		ctx.fillStyle = team.color;
 
-		// draw each ship
 		for (var j = team.ships.length - 1; j >= 0; j--) {
 			var ship = team.ships[j];
 			var headingY = Math.sin(ship.theta) * 40;
@@ -54,8 +51,6 @@ function globalDraw(canvas, globalState) {
 				ctx.translate(ship.x - 10, ship.y - 10);
 				ctx.rotate(ship.theta + Math.PI/2);
 				ctx.drawImage(ship.image, -10, -10);
-				//ctx.rotate(-1*ship.theta);
-				//ctx.translate(-1*ship.x, -1*ship.y);
 				ctx.restore();
 			} else {
 				ctx.fillRect(ship.x - ship.size / 2, ship.y - ship.size / 2, ship.size, ship.size);
@@ -68,4 +63,11 @@ function globalDraw(canvas, globalState) {
 			}
 		};
 	};
+
+	// draw the bullets
+	for (var i = 0; i < globalState.bullets.length; i ++) {
+		ctx.fillStyle = "rgb(255, 255, 255)";
+		var bullet = globalState.bullets[i];
+		ctx.fillRect(bullet.x - 2, bullet.y - 2, 4, 4);
+	}
 }
