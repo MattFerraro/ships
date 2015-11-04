@@ -53,7 +53,7 @@ function globalInit() {
 	var globalState = {};
 
 	var colors = ["red", "blue"];
-	var basePositions = [{x: 100, y: 350}, {x: 600, y: 350}];
+	var basePositions = [{x: 200, y: 350}, {x: 900, y: 350}];
 	var numberOfShips = 40;
 	globalState.teams = [];
 	for (var i = 0; i < 2; i++) {
