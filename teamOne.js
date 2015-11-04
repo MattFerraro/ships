@@ -51,13 +51,14 @@ function getCommandsTeamOne(globalState, teamState) {
         var positionErrXdt = ship.dx;
         var positionErrYdt = ship.dy;
 
-        var Kp = -1;
-        var Kd = 1;
+        var KpMain = -1;
+        var KdMain = 1;
 
-        mainThrust = positionErrX * Kp + positionErrXdt * Kd;
-        // mainThrust = 0;
-        sideThrust = positionErrY * Kp + positionErrYdt * Kd;
-        // sideThrust = 0;
+        var KpSide = -.5;
+        var KdSide = 1;
+
+        mainThrust = positionErrX * KpMain + positionErrXdt * KdMain;
+        sideThrust = positionErrY * KpSide + positionErrYdt * KdSide;
         commands.push({
             torque: torque,
             mainThrust: mainThrust,

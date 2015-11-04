@@ -10,7 +10,8 @@ function Ship (x, y) {
 			mass: 1,
 			moment: 1,
 			maxTorque: 1,
-			maxThrust: 100
+			maxMainThrust: 100,
+			maxSideThrust: 20
 		}
 	}
 	ship.image = shipyard(20, 20);
@@ -21,8 +22,8 @@ function Ship (x, y) {
 	}
 	ship.x = x;
 	ship.y = y;
-	ship.dx = 0;  // Math.random() * 20 - 10;
-	ship.dy = 0;  // Math.random() * 20 - 10;
+	ship.dx = Math.random() * 20 - 10;
+	ship.dy = Math.random() * 20 - 10;
 
 	ship.theta = 180 * Math.PI / 180;
 	ship.dtheta = 0;
@@ -77,19 +78,19 @@ function globalUpdate(globalState, dt, allCommands) {
 			var command = commands[j];
 			var torque = command.torque;
 			var mainThrust = command.mainThrust;
-			if (mainThrust > ship.maxThrust) {
-				mainThrust = ship.maxThrust;
+			if (mainThrust > ship.maxMainThrust) {
+				mainThrust = ship.maxMainThrust;
 			}
-			else if (mainThrust < -ship.maxThrust) {
-				mainThrust = -ship.maxThrust;
+			else if (mainThrust < -ship.maxMainThrust) {
+				mainThrust = -ship.maxMainThrust;
 			}
 
 			var sideThrust = command.sideThrust;
-			if (sideThrust > ship.maxThrust) {
-				sideThrust = ship.maxThrust;
+			if (sideThrust > ship.maxSideThrust) {
+				sideThrust = ship.maxSideThrust;
 			}
-			else if (sideThrust < -ship.maxThrust) {
-				sideThrust = -ship.maxThrust;
+			else if (sideThrust < -ship.maxSideThrust) {
+				sideThrust = -ship.maxSideThrust;
 			}
 
 			// given the state of this ship's derivatives, assume constant
